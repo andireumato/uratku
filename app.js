@@ -114,7 +114,7 @@ function renderPasien() {
         <div id="form-lab" style="display:none">
           <div class="form-row">
             <div class="fg"><label>Tanggal</label><input type="date" id="lab-tgl"></div>
-            <div class="fg"><label>Nama Lab / RS</label><input type="text" id="lab-nama" placeholder="RS Adam Malik"></div>
+            <div class="fg"><label>Nama Lab / RS</label><input type="text" id="lab-nama" placeholder="mis. RS Adam Malik"></div>
           </div>
           <div class="form-row">
             <div class="fg"><label>Asam Urat (mg/dL)</label><input type="number" id="lab-au" placeholder="7.2" step="0.1"></div>
