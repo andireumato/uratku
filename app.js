@@ -44,7 +44,7 @@ db.auth.onAuthStateChange(async (event, session) => {
 function renderPasien() {
   document.getElementById('app').innerHTML = `
     <nav class="nav">
-      <div class="logo"><span class="logo-u">Urat</span><span class="logo-k">Ku</span></div>
+      <div class="logo"><div><span class="logo-u">Urat</span><span class="logo-k">Ku</span></div><div style="font-size:8px;color:#9CA3AF;font-weight:500;letter-spacing:0.3px">by andireumato</div></div>
       <div class="nav-tabs">
         <button class="nav-btn active" onclick="showPage('beranda',this)">Beranda</button>
         <button class="nav-btn" onclick="showPage('lab',this)">Catat Lab</button>
