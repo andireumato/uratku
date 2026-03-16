@@ -124,4 +124,3 @@ const MAKANAN_PURIN = [
   {nama:'Whisky/vodka/arak',             purin:5,   kategori:'sedang'},
 
 ];
-```
