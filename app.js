@@ -50,6 +50,7 @@ function renderPasien() {
         <button class="nav-btn" onclick="showPage('lab',this)">Catat Lab</button>
         <button class="nav-btn" onclick="showPage('makanan',this)">Makanan</button>
         <button class="nav-btn" onclick="showPage('obat',this)">Obat</button>
+        <button class="nav-btn" onclick="showPage('komorbid',this)">Komorbid</button>
       </div>
       <button class="btn-logout" onclick="Auth.logout()" title="Keluar">&#x2192;</button>
     </nav>
@@ -186,6 +187,55 @@ function renderPasien() {
           </div>
         </div>
         <button class="btn-primary" onclick="tambahObat()">Tambah Pengingat</button>
+      </div>
+    </div>
+
+    <div class="page" id="pg-komorbid">
+      <div class="page-header">
+        <div class="page-title">Komorbid</div>
+        <div class="page-sub">Pantau tekanan darah, gula darah, dan berat badan</div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:10px">Catat Data Hari Ini</div>
+        <div class="form-row">
+          <div class="fg"><label>Tanggal</label><input type="date" id="komorbid-tgl"></div>
+          <div class="fg"><label>Berat Badan (kg)</label><input type="number" id="komorbid-bb" placeholder="65" step="0.1"></div>
+        </div>
+        <div style="font-size:11px;font-weight:700;color:#6B7280;margin-bottom:8px;margin-top:4px">TEKANAN DARAH</div>
+        <div class="form-row">
+          <div class="fg"><label>Sistolik (mmHg)</label><input type="number" id="komorbid-sistol" placeholder="120"></div>
+          <div class="fg"><label>Diastolik (mmHg)</label><input type="number" id="komorbid-diastol" placeholder="80"></div>
+          <div class="fg"><label>Nadi (x/menit)</label><input type="number" id="komorbid-nadi" placeholder="80"></div>
+        </div>
+        <div style="font-size:11px;font-weight:700;color:#6B7280;margin-bottom:8px;margin-top:4px">GULA DARAH</div>
+        <div class="form-row">
+          <div class="fg"><label>GDS (mg/dL)</label><input type="number" id="komorbid-gds" placeholder="140"></div>
+          <div class="fg"><label>GDP (mg/dL)</label><input type="number" id="komorbid-gdp" placeholder="100"></div>
+          <div class="fg"><label>GD2PP (mg/dL)</label><input type="number" id="komorbid-gd2pp" placeholder="140"></div>
+        </div>
+        <div class="form-row">
+          <div class="fg"><label>HbA1c (%)</label><input type="number" id="komorbid-hba1c" placeholder="6.5" step="0.1"></div>
+          <div class="fg"><label>Catatan</label><input type="text" id="komorbid-catatan" placeholder="Kondisi saat ini..."></div>
+        </div>
+        <button class="btn-primary" onclick="simpanKomorbid()">Simpan Data</button>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title">Tren Tekanan Darah</div>
+          <select id="filter-komorbid" onchange="loadKomorbidChart()" style="font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid #E5E7EB">
+            <option value="30">30 hari</option>
+            <option value="90">3 bulan</option>
+          </select>
+        </div>
+        <div class="chart-wrap"><canvas id="chartTD"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:6px">Tren Gula Darah</div>
+        <div class="chart-wrap"><canvas id="chartGD"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:8px">Riwayat Data</div>
+        <div id="komorbid-history">Memuat...</div>
       </div>
     </div>
 
@@ -655,6 +705,8 @@ function setTanggal() {
   if (prickTgl) prickTgl.value = new Date().toISOString().slice(0, 16);
   const labTgl = document.getElementById('lab-tgl');
   if (labTgl) labTgl.value = new Date().toISOString().split('T')[0];
+  const komorbidTgl = document.getElementById('komorbid-tgl');
+  if (komorbidTgl) komorbidTgl.value = new Date().toISOString().split('T')[0];
 }
 
 function showPage(id, btn) {
@@ -735,3 +787,99 @@ function buildPainRow() {
   ).join('');
 }
 function setPain(v) { window._selectedPain = v; buildPainRow(); }
+
+// ── KOMORBID ─────────────────────────────────────────────────
+let chartTD = null;
+let chartGD = null;
+
+async function simpanKomorbid() {
+  const tgl = document.getElementById('komorbid-tgl')?.value;
+  if (!tgl) { alert('Isi tanggal terlebih dahulu.'); return; }
+  const { error } = await db.from('komorbid').insert({
+    pasien_id: currentUser.id,
+    tanggal: tgl,
+    td_sistolik: parseInt(document.getElementById('komorbid-sistol')?.value)||null,
+    td_diastolik: parseInt(document.getElementById('komorbid-diastol')?.value)||null,
+    nadi: parseInt(document.getElementById('komorbid-nadi')?.value)||null,
+    gds: parseFloat(document.getElementById('komorbid-gds')?.value)||null,
+    gdp: parseFloat(document.getElementById('komorbid-gdp')?.value)||null,
+    gd2pp: parseFloat(document.getElementById('komorbid-gd2pp')?.value)||null,
+    hba1c: parseFloat(document.getElementById('komorbid-hba1c')?.value)||null,
+    berat_badan: parseFloat(document.getElementById('komorbid-bb')?.value)||null,
+    catatan: document.getElementById('komorbid-catatan')?.value||null,
+  });
+  if (error) { alert('Gagal simpan: ' + error.message); return; }
+  alert('Data komorbid berhasil disimpan!');
+  loadKomorbidChart();
+  loadKomorbidHistory();
+}
+
+async function loadKomorbidChart() {
+  const days = parseInt(document.getElementById('filter-komorbid')?.value||30);
+  const since = new Date(Date.now() - days*86400000).toISOString().split('T')[0];
+  const { data } = await db.from('komorbid').select('*')
+    .eq('pasien_id', currentUser.id)
+    .gte('tanggal', since)
+    .order('tanggal', {ascending:true});
+  if (!data || data.length === 0) return;
+  const labels = data.map(d => d.tanggal);
+
+  // Chart TD
+  const ctxTD = document.getElementById('chartTD');
+  if (ctxTD) {
+    if (chartTD) chartTD.destroy();
+    chartTD = new Chart(ctxTD, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          {label:'Sistolik', data: data.map(d => d.td_sistolik), borderColor:'#DC2626', backgroundColor:'rgba(220,38,38,.06)', borderWidth:2, pointRadius:4, fill:true, tension:0.4},
+          {label:'Diastolik', data: data.map(d => d.td_diastolik), borderColor:'#2563EB', backgroundColor:'rgba(37,99,235,.06)', borderWidth:2, pointRadius:4, fill:true, tension:0.4},
+          {label:'Normal 120', data: Array(labels.length).fill(120), borderColor:'rgba(220,38,38,.3)', borderDash:[5,4], borderWidth:1, pointRadius:0, fill:false},
+        ]
+      },
+      options: {responsive:true, maintainAspectRatio:false, plugins:{legend:{display:true, labels:{font:{size:10}}}},
+        scales:{x:{grid:{display:false},ticks:{font:{size:10},color:'#9CA3AF'}}, y:{min:50,max:200,grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{size:10},color:'#9CA3AF'}}}}
+    });
+  }
+
+  // Chart GD
+  const ctxGD = document.getElementById('chartGD');
+  if (ctxGD) {
+    if (chartGD) chartGD.destroy();
+    chartGD = new Chart(ctxGD, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          {label:'GDS', data: data.map(d => d.gds), borderColor:'#D97706', backgroundColor:'rgba(217,119,6,.06)', borderWidth:2, pointRadius:4, fill:true, tension:0.4},
+          {label:'GDP', data: data.map(d => d.gdp), borderColor:'#7C3AED', backgroundColor:'rgba(124,58,237,.06)', borderWidth:2, pointRadius:4, fill:true, tension:0.4},
+          {label:'Normal GDS 200', data: Array(labels.length).fill(200), borderColor:'rgba(220,38,38,.3)', borderDash:[5,4], borderWidth:1, pointRadius:0, fill:false},
+        ]
+      },
+      options: {responsive:true, maintainAspectRatio:false, plugins:{legend:{display:true, labels:{font:{size:10}}}},
+        scales:{x:{grid:{display:false},ticks:{font:{size:10},color:'#9CA3AF'}}, y:{min:50,max:400,grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{size:10},color:'#9CA3AF'}}}}
+    });
+  }
+}
+
+async function loadKomorbidHistory() {
+  const { data } = await db.from('komorbid').select('*')
+    .eq('pasien_id', currentUser.id)
+    .order('tanggal', {ascending:false})
+    .limit(10);
+  const el = document.getElementById('komorbid-history');
+  if (!el) return;
+  if (!data || data.length === 0) { el.innerHTML = '<div style="color:#9CA3AF;font-size:12px">Belum ada data komorbid.</div>'; return; }
+  el.innerHTML = '<div style="overflow-x:auto"><table class="data-table"><thead><tr><th>Tanggal</th><th>TD</th><th>Nadi</th><th>GDS</th><th>GDP</th><th>HbA1c</th><th>BB</th></tr></thead><tbody>'
+    + data.map(r => '<tr>'
+      + '<td>' + r.tanggal + '</td>'
+      + '<td style="text-align:center;font-weight:700;color:' + (r.td_sistolik>140?'#DC2626':'#16A34A') + '">' + (r.td_sistolik||'-') + '/' + (r.td_diastolik||'-') + '</td>'
+      + '<td style="text-align:center">' + (r.nadi||'-') + '</td>'
+      + '<td style="text-align:center;color:' + (r.gds>200?'#DC2626':r.gds>140?'#D97706':'#16A34A') + '">' + (r.gds||'-') + '</td>'
+      + '<td style="text-align:center;color:' + (r.gdp>126?'#DC2626':r.gdp>100?'#D97706':'#16A34A') + '">' + (r.gdp||'-') + '</td>'
+      + '<td style="text-align:center;color:' + (r.hba1c>7?'#DC2626':r.hba1c>6.5?'#D97706':'#16A34A') + '">' + (r.hba1c||'-') + '</td>'
+      + '<td style="text-align:center">' + (r.berat_badan||'-') + '</td>'
+      + '</tr>').join('')
+    + '</tbody></table></div>';
+}
