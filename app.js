@@ -357,9 +357,26 @@ async function loadSerangan() {
 }
 
 async function loadPesanDokter() {
-  const el = document.getElementById('pesan-dokter');
+ const el = document.getElementById('pesan-dokter');
   if (!el) return;
-  el.innerHTML = '<div style="color:#9CA3AF;font-size:12px;padding:8px 0">Belum ada pesan dari dokter.</div>';
+  const { data, error } = await db
+    .from('pesan')
+    .select('*, dari:dari_id(nama_lengkap)')
+    .eq('ke_id', currentUser.id)
+    .order('dibuat_pada', { ascending: false })
+    .limit(10);
+  if (!data || data.length === 0) {
+    el.innerHTML = '<div style="color:#9CA3AF;font-size:12px;padding:8px 0">Belum ada pesan dari dokter.</div>';
+    return;
+  }
+  await db.from('pesan').update({ sudah_dibaca: true }).eq('ke_id', currentUser.id).eq('sudah_dibaca', false);
+  el.innerHTML = data.map(p => {
+    const tgl = new Date(p.dibuat_pada).toLocaleDateString('id-ID', {day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+    return `<div style="padding:10px 0;border-bottom:1px solid #E5E7EB">
+      <div style="font-size:10px;color:#9CA3AF;margin-bottom:3px">${p.dari?.nama_lengkap||'Dokter'} · ${tgl}</div>
+      <div style="font-size:12px;color:#374151;line-height:1.5">${p.isi_pesan}</div>
+    </div>`;
+  }).join('');
 }
 
 async function loadLabHistory() {
@@ -532,10 +549,16 @@ async function showPasienDetail(pasienId) {
 }
 
 async function kirimCatatan(pasienId) {
-  const catatan = document.getElementById('catatan-dokter-input')?.value;
-  if (!catatan) return;
-  // Simpan ke tabel serangan sebagai catatan dokter (atau buat tabel pesan tersendiri)
-  alert('Catatan berhasil dikirim ke pasien!\n\n(Di versi lengkap, catatan ini akan muncul di dashboard pasien dan dikirim via notifikasi.)');
+  const isi = document.getElementById('catatan-dokter-input')?.value?.trim();
+  if (!isi) { alert('Tulis pesan terlebih dahulu.'); return; }
+  const { error } = await db.from('pesan').insert({
+    dari_id: currentUser.id,
+    ke_id: pasienId,
+    isi_pesan: isi,
+  });
+  if (error) { alert('Gagal kirim: ' + error.message); return; }
+  document.getElementById('catatan-dokter-input').value = '';
+  alert('Pesan berhasil dikirim ke pasien!');
 }
 
 // ══════════════════════════════════════════════════════════════
