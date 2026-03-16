@@ -754,102 +754,72 @@ function setPain(v) { window._selectedPain = v; buildPainRow(); }
 async function loadAIAnalysis() {
   const el = document.getElementById('ai-analysis');
   if (!el) return;
-  el.innerHTML = '<div style="color:#9CA3AF;font-size:12px">Memuat analisis AI...</div>';
-
-  // Ambil data pasien
+  el.innerHTML = '<div style="color:#9CA3AF;font-size:12px;padding:8px">Menganalisis data Anda...</div>';
   const [labRes, seranganRes] = await Promise.all([
     db.from('hasil_lab').select('*').eq('pasien_id', currentUser.id).order('tanggal_periksa', {ascending:false}).limit(10),
-    db.from('serangan_gout').select('*').eq('pasien_id', currentUser.id).order('tanggal_serangan', {ascending:false}).limit(5),
+    db.from('serangan_gout').select('*').eq('pasien_id', currentUser.id).order('tanggal_serangan', {ascending:false}).limit(10),
   ]);
-
-  const labData = labRes.data || [];
-  const seranganData = seranganRes.data || [];
-
-  if (labData.length === 0) {
-    el.innerHTML = '<div style="color:#9CA3AF;font-size:12px">Belum ada data lab. Catat hasil lab pertama Anda untuk mendapatkan analisis AI.</div>';
+  const lab = labRes.data || [];
+  const serangan = seranganRes.data || [];
+  if (lab.length === 0) {
+    el.innerHTML = '<div style="color:#9CA3AF;font-size:12px;padding:8px">Belum ada data lab. Catat hasil lab pertama untuk mendapat analisis AI.</div>';
     return;
   }
-
-  // Siapkan data untuk Claude
-  const auTerakhir = labData[0]?.asam_urat;
-  const auList = labData.map(d => `${d.tanggal_periksa}: ${d.asam_urat} mg/dL`).join(', ');
-  const seranganList = seranganData.length > 0
-    ? seranganData.map(s => `${new Date(s.tanggal_serangan).toLocaleDateString('id-ID')} - sendi: ${(s.sendi_terkena||[]).join('/')} - nyeri: ${s.skala_nyeri}/10 - makanan: ${s.makanan_pemicu||'-'}`).join('\n')
-    : 'Tidak ada riwayat serangan';
-
-  try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages: [{
-          role: 'user',
-          content: `Kamu adalah asisten AI untuk aplikasi monitoring gout UratKu. Analisis data pasien berikut dan berikan respons dalam Bahasa Indonesia yang mudah dipahami pasien awam.
-
-DATA PASIEN:
-- Asam urat terakhir: ${auTerakhir} mg/dL
-- Riwayat asam urat: ${auList}
-- Riwayat serangan gout: ${seranganList}
-
-Berikan analisis dalam format JSON dengan struktur PERSIS seperti ini (jangan tambah field lain):
-{
-  "pola_serangan": "penjelasan pola serangan berdasarkan data, 2-3 kalimat",
-  "makanan_pemicu": "makanan yang paling sering muncul sebelum serangan, 1-2 kalimat",
-  "risiko_minggu_ini": "rendah/sedang/tinggi",
-  "alasan_risiko": "alasan singkat kenapa risiko tersebut, 1-2 kalimat",
-  "rekomendasi_diet": ["rekomendasi 1", "rekomendasi 2", "rekomendasi 3"],
-  "pesan_motivasi": "pesan motivasi personal untuk pasien, 1 kalimat"
-}`
-        }]
-      })
-    });
-
-    const data = await response.json();
-    const text = data.content?.[0]?.text || '';
-    const clean = text.replace(/```json|```/g, '').trim();
-    const hasil = JSON.parse(clean);
-
-    const risikoColor = hasil.risiko_minggu_ini === 'rendah' ? '#16A34A' :
-                        hasil.risiko_minggu_ini === 'sedang' ? '#D97706' : '#DC2626';
-    const risikoBg = hasil.risiko_minggu_ini === 'rendah' ? '#F0FDF4' :
-                     hasil.risiko_minggu_ini === 'sedang' ? '#FFFBEB' : '#FEF2F2';
-
-    el.innerHTML = `
-      <div style="display:flex;flex-direction:column;gap:10px">
-
-        <div style="background:#F5F3FF;border:1px solid #DDD6FE;border-left:4px solid #7C3AED;border-radius:8px;padding:12px">
-          <div style="font-size:10px;font-weight:700;color:#6D28D9;margin-bottom:4px">ANALISIS POLA SERANGAN</div>
-          <div style="font-size:12px;color:#374151;line-height:1.6">${hasil.pola_serangan}</div>
-          ${hasil.makanan_pemicu ? `<div style="margin-top:6px;font-size:11px;color:#6D28D9"><strong>Makanan pemicu:</strong> ${hasil.makanan_pemicu}</div>` : ''}
-        </div>
-
-        <div style="background:${risikoBg};border:1px solid ${risikoColor}40;border-radius:8px;padding:12px">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-            <div style="font-size:10px;font-weight:700;color:${risikoColor}">PREDIKSI RISIKO SERANGAN MINGGU INI</div>
-            <span style="background:${risikoColor};color:#fff;font-size:10px;font-weight:700;padding:2px 10px;border-radius:20px">${hasil.risiko_minggu_ini.toUpperCase()}</span>
-          </div>
-          <div style="font-size:12px;color:#374151">${hasil.alasan_risiko}</div>
-        </div>
-
-        <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-left:4px solid #16A34A;border-radius:8px;padding:12px">
-          <div style="font-size:10px;font-weight:700;color:#15803D;margin-bottom:6px">REKOMENDASI DIET PERSONAL</div>
-          ${(hasil.rekomendasi_diet||[]).map(r => `
-            <div style="display:flex;gap:6px;margin-bottom:4px;font-size:12px;color:#374151">
-              <span style="color:#16A34A;font-weight:700;flex-shrink:0">✓</span><span>${r}</span>
-            </div>`).join('')}
-        </div>
-
-        <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:10px 12px;font-size:12px;color:#1D4ED8;font-style:italic">
-          "${hasil.pesan_motivasi}"
-        </div>
-
-        <div style="font-size:10px;color:#9CA3AF;text-align:right">Dianalisis oleh Claude AI · ${new Date().toLocaleDateString('id-ID')}</div>
-      </div>`;
-
-  } catch(e) {
-    el.innerHTML = '<div style="color:#DC2626;font-size:12px">Gagal memuat analisis AI. Coba refresh halaman.</div>';
-    console.error('AI error:', e);
+  const auTerakhir = lab[0]?.asam_urat || 0;
+  const auList = lab.map(d => d.asam_urat).filter(Boolean);
+  const auRata = auList.reduce((a,b) => a+b, 0) / auList.length;
+  const auTren = auList.length >= 2 ? (auList[0] > auList[1] ? 'naik' : auList[0] < auList[1] ? 'turun' : 'stabil') : 'stabil';
+  let skorRisiko = 0;
+  if (auTerakhir >= 9) skorRisiko += 3;
+  else if (auTerakhir >= 7) skorRisiko += 2;
+  else if (auTerakhir >= 6) skorRisiko += 1;
+  if (auTren === 'naik') skorRisiko += 2;
+  const seranganBulanIni = serangan.filter(s => (new Date() - new Date(s.tanggal_serangan)) < 30*24*60*60*1000).length;
+  if (seranganBulanIni >= 2) skorRisiko += 3;
+  else if (seranganBulanIni === 1) skorRisiko += 2;
+  const risiko = skorRisiko >= 5 ? 'tinggi' : skorRisiko >= 3 ? 'sedang' : 'rendah';
+  const risikoColor = risiko === 'rendah' ? '#16A34A' : risiko === 'sedang' ? '#D97706' : '#DC2626';
+  const risikoBg = risiko === 'rendah' ? '#F0FDF4' : risiko === 'sedang' ? '#FFFBEB' : '#FEF2F2';
+  const semuaMakanan = serangan.map(s => s.makanan_pemicu).filter(Boolean).join(' ').toLowerCase();
+  const pemicuMap = {'seafood/laut':['seafood','udang','kepiting','cumi','kerang','ikan asin','teri'],'jeroan':['jeroan','hati','ampela','otak'],'emping':['emping','melinjo'],'alkohol':['alkohol','bir','tuak'],'daging merah':['daging sapi','daging kambing']};
+  const pemicuDitemukan = Object.entries(pemicuMap).filter(([,kw]) => kw.some(k => semuaMakanan.includes(k))).map(([label]) => label);
+  let polaTeks = '';
+  if (serangan.length === 0) {
+    polaTeks = 'Belum ada riwayat serangan gout tercatat. Pertahankan pola hidup sehat dan kontrol kadar asam urat secara rutin.';
+  } else {
+    const sendiList = serangan.flatMap(s => s.sendi_terkena || []);
+    const sendiCount = {};
+    sendiList.forEach(s => { sendiCount[s] = (sendiCount[s]||0)+1; });
+    const sendiTerbanyak = Object.entries(sendiCount).sort((a,b) => b[1]-a[1])[0]?.[0] || '-';
+    const nyeriRata = serangan.reduce((a,s) => a+(s.skala_nyeri||0),0) / serangan.length;
+    polaTeks = 'Dalam ' + serangan.length + ' serangan terakhir, sendi paling sering terkena adalah ' + sendiTerbanyak + ' dengan rata-rata nyeri ' + nyeriRata.toFixed(1) + '/10. Tren asam urat ' + (auTren === 'naik' ? 'sedang meningkat' : auTren === 'turun' ? 'sedang membaik' : 'stabil') + '.';
   }
+  const rekomendasiDiet = [];
+  if (pemicuDitemukan.includes('seafood/laut')) rekomendasiDiet.push('Hindari seafood terutama udang, kepiting, dan ikan asin yang terbukti memicu serangan Anda');
+  if (pemicuDitemukan.includes('jeroan')) rekomendasiDiet.push('Hentikan konsumsi jeroan (hati, ampela, otak) yang sangat tinggi purin');
+  if (pemicuDitemukan.includes('alkohol')) rekomendasiDiet.push('Hindari alkohol karena menghambat ekskresi asam urat oleh ginjal');
+  if (auTerakhir >= 7) rekomendasiDiet.push('Minum minimal 2.5 liter air putih per hari untuk membantu ekskresi asam urat lewat urin');
+  rekomendasiDiet.push('Konsumsi susu rendah lemak dan yogurt setiap hari karena terbukti menurunkan risiko serangan');
+  rekomendasiDiet.push('Batasi minuman manis dan jus kemasan karena fruktosa meningkatkan produksi asam urat');
+  const motivasi = auTren === 'turun' && auTerakhir < 6 ? 'Asam urat Anda terkontrol dengan baik, teruskan gaya hidup sehat ini!' : auTerakhir >= 9 ? 'Kadar asam urat perlu segera diturunkan, pastikan tidak melewatkan obat dan segera hubungi dokter Anda.' : 'Dengan disiplin minum obat dan menjaga pola makan, asam urat Anda pasti bisa terkontrol!';
+  el.innerHTML = '<div style="display:flex;flex-direction:column;gap:10px">'
+    + '<div style="background:#F5F3FF;border:1px solid #DDD6FE;border-left:4px solid #7C3AED;border-radius:8px;padding:12px">'
+    + '<div style="font-size:10px;font-weight:700;color:#6D28D9;margin-bottom:4px">ANALISIS POLA SERANGAN</div>'
+    + '<div style="font-size:12px;color:#374151;line-height:1.6">' + polaTeks + '</div>'
+    + (pemicuDitemukan.length > 0 ? '<div style="margin-top:6px;font-size:11px;color:#6D28D9"><strong>Makanan pemicu:</strong> ' + pemicuDitemukan.join(', ') + '</div>' : '')
+    + '</div>'
+    + '<div style="background:' + risikoBg + ';border:1px solid ' + risikoColor + '40;border-radius:8px;padding:12px">'
+    + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">'
+    + '<div style="font-size:10px;font-weight:700;color:' + risikoColor + '">PREDIKSI RISIKO SERANGAN MINGGU INI</div>'
+    + '<span style="background:' + risikoColor + ';color:#fff;font-size:10px;font-weight:700;padding:2px 10px;border-radius:20px">' + risiko.toUpperCase() + '</span>'
+    + '</div>'
+    + '<div style="font-size:12px;color:#374151">AU terakhir ' + auTerakhir + ' mg/dL, rata-rata ' + auRata.toFixed(1) + ' mg/dL, tren ' + auTren + '. ' + (seranganBulanIni > 0 ? seranganBulanIni + ' serangan dalam 30 hari terakhir.' : 'Tidak ada serangan dalam 30 hari terakhir.') + '</div>'
+    + '</div>'
+    + '<div style="background:#F0FDF4;border:1px solid #BBF7D0;border-left:4px solid #16A34A;border-radius:8px;padding:12px">'
+    + '<div style="font-size:10px;font-weight:700;color:#15803D;margin-bottom:6px">REKOMENDASI DIET PERSONAL</div>'
+    + rekomendasiDiet.slice(0,4).map(r => '<div style="display:flex;gap:6px;margin-bottom:5px;font-size:12px;color:#374151;align-items:flex-start"><span style="color:#16A34A;font-weight:700;flex-shrink:0">+</span><span>' + r + '</span></div>').join('')
+    + '</div>'
+    + '<div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:10px 12px;font-size:12px;color:#1D4ED8;font-style:italic">"' + motivasi + '"</div>'
+    + '<div style="font-size:10px;color:#9CA3AF;text-align:right">Analisis UratKu AI ' + new Date().toLocaleDateString('id-ID') + ' - Bukan pengganti konsultasi dokter</div>'
+    + '</div>';
 }
