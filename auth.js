@@ -108,7 +108,7 @@ const Auth = {
         <div class="auth-card">
           <div class="logo-big">
             <div class="logo-text"><span class="logo-u">Urat</span><span class="logo-k">Ku</span></div>
-<div style="font-size:8px;color:#9CA3AF;margin-top:3px;letter-spacing:0.5px">by dr.dirandireumato</div>
+<div style="font-size:10px;color:#9CA3AF;letter-spacing:0.5px">by dr.andireumato</div>
   <div class="logo-tag">${APP_CONFIG.tagline}</div>
           <div class="form-title">Masuk ke UratKu</div>
           <div class="form-sub">Belum punya akun? <a class="link" onclick="Auth.renderRegister()">Daftar sekarang</a></div>
