@@ -33,7 +33,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 // Listen perubahan auth (misal setelah login Google)
 db.auth.onAuthStateChange(async (event, session) => {
-  if (event === 'SIGNED_IN' && session) {
+  if (event === 'SIGNED_IN' && !currentUser && session) {
     window.location.reload();
   }
 });
