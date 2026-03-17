@@ -198,45 +198,85 @@ function renderPasien() {
     <div class="page" id="pg-komorbid">
       <div class="page-header">
         <div class="page-title">Komorbid</div>
-        <div class="page-sub">Pantau tekanan darah, gula darah, dan berat badan</div>
+        <div class="page-sub">Pantau tekanan darah, gula darah, dan antropometri</div>
       </div>
       <div class="card">
         <div class="card-title" style="margin-bottom:10px">Catat Data Hari Ini</div>
-        <div class="form-row">
-          <div class="fg"><label>Tanggal</label><input type="date" id="komorbid-tgl"></div>
-          <div style="font-size:11px;font-weight:700;color:#6B7280;margin-bottom:8px;margin-top:4px">ANTROPOMETRI</div>
-<div class="form-row four">
-  <div class="fg"><label>Berat Badan (kg)</label><input type="number" id="komorbid-bb" placeholder="65" step="0.1" oninput="hitungIMT()"></div>
-  <div class="fg"><label>Tinggi Badan (cm)</label><input type="number" id="komorbid-tb" placeholder="165" step="0.1" oninput="hitungIMT()"></div>
-  <div class="fg"><label>Lingkar Pinggang (cm)</label><input type="number" id="komorbid-lp" placeholder="80" step="0.1" oninput="hitungLP()"></div>
-  <div class="fg"><label>Lingkar Panggul (cm)</label><input type="number" id="komorbid-lpanggul" placeholder="95" step="0.1" oninput="hitungLP()"></div>
-</div>
+        <div class="fg"><label>Tanggal</label><input type="date" id="komorbid-tgl"></div>
 
-<!-- Hasil IMT otomatis -->
-<div id="hasil-imt" style="display:none;background:#F9FAFB;border-radius:10px;padding:12px;margin-bottom:12px;border:1px solid #E5E7EB">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-    <div style="font-size:11px;font-weight:700;color:#374151">HASIL KALKULASI OTOMATIS</div>
-    <div style="font-size:9px;color:#9CA3AF">Standar Asia-Pasifik (WHO 2004)</div>
-  </div>
-  <div style="display:flex;gap:8px;margin-bottom:8px">
-    <div style="flex:1;background:#fff;border-radius:8px;padding:10px;border:1px solid #E5E7EB;text-align:center">
-      <div id="imt-nilai" style="font-size:20px;font-weight:700">—</div>
-      <div style="font-size:9px;color:#9CA3AF">kg/m²</div>
-      <div style="font-size:10px;color:#6B7280;margin-top:2px">IMT</div>
-      <div id="imt-kategori" style="font-size:10px;font-weight:700;margin-top:4px;padding:2px 8px;border-radius:10px;display:inline-block">—</div>
+        <div style="font-size:11px;font-weight:700;color:#6B7280;margin:10px 0 8px">ANTROPOMETRI</div>
+        <div class="form-row">
+          <div class="fg"><label>Berat Badan (kg)</label><input type="number" id="komorbid-bb" placeholder="65" step="0.1" oninput="hitungIMT()"></div>
+          <div class="fg"><label>Tinggi Badan (cm)</label><input type="number" id="komorbid-tb" placeholder="165" step="0.1" oninput="hitungIMT()"></div>
+          <div class="fg"><label>Lingkar Pinggang (cm)</label><input type="number" id="komorbid-lp" placeholder="80" step="0.1" oninput="hitungLP()"></div>
+          <div class="fg"><label>Lingkar Panggul (cm)</label><input type="number" id="komorbid-lpanggul" placeholder="95" step="0.1" oninput="hitungLP()"></div>
+        </div>
+
+        <div id="hasil-imt" style="display:none;background:#F9FAFB;border-radius:10px;padding:12px;margin-bottom:12px;border:1px solid #E5E7EB">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div style="font-size:11px;font-weight:700;color:#374151">HASIL KALKULASI OTOMATIS</div>
+            <div style="font-size:9px;color:#9CA3AF">Standar Asia-Pasifik (WHO 2004)</div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <div style="min-width:100px;flex:1;background:#fff;border-radius:8px;padding:10px;border:1px solid #E5E7EB;text-align:center">
+              <div id="imt-nilai" style="font-size:20px;font-weight:700">—</div>
+              <div style="font-size:9px;color:#9CA3AF">kg/m²</div>
+              <div style="font-size:10px;color:#6B7280;margin-top:2px">IMT</div>
+              <div id="imt-kategori" style="font-size:10px;font-weight:700;margin-top:4px;padding:2px 8px;border-radius:10px;display:inline-block">—</div>
+            </div>
+            <div style="min-width:100px;flex:1;background:#fff;border-radius:8px;padding:10px;border:1px solid #E5E7EB;text-align:center">
+              <div id="lp-nilai" style="font-size:20px;font-weight:700">—</div>
+              <div style="font-size:9px;color:#9CA3AF">rasio</div>
+              <div style="font-size:10px;color:#6B7280;margin-top:2px">Pinggang/Panggul</div>
+              <div id="lp-kategori" style="font-size:10px;font-weight:700;margin-top:4px;padding:2px 8px;border-radius:10px;display:inline-block">—</div>
+            </div>
+            <div style="min-width:200px;flex:2;background:#fff;border-radius:8px;padding:10px;border:1px solid #E5E7EB">
+              <div id="obesitas-pesan" style="font-size:11px;color:#374151;line-height:1.6"></div>
+              <div style="font-size:9px;color:#9CA3AF;margin-top:6px">Ref: WHO Asia-Pacific 2000; Lancet 2004;363:157-163</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="font-size:11px;font-weight:700;color:#6B7280;margin:10px 0 8px">TEKANAN DARAH</div>
+        <div class="form-row">
+          <div class="fg"><label>Sistolik (mmHg)</label><input type="number" id="komorbid-sistol" placeholder="120"></div>
+          <div class="fg"><label>Diastolik (mmHg)</label><input type="number" id="komorbid-diastol" placeholder="80"></div>
+          <div class="fg"><label>Nadi (x/menit)</label><input type="number" id="komorbid-nadi" placeholder="80"></div>
+        </div>
+
+        <div style="font-size:11px;font-weight:700;color:#6B7280;margin:10px 0 8px">GULA DARAH</div>
+        <div class="form-row">
+          <div class="fg"><label>GDS (mg/dL)</label><input type="number" id="komorbid-gds" placeholder="140"></div>
+          <div class="fg"><label>GDP (mg/dL)</label><input type="number" id="komorbid-gdp" placeholder="100"></div>
+          <div class="fg"><label>GD2PP (mg/dL)</label><input type="number" id="komorbid-gd2pp" placeholder="140"></div>
+          <div class="fg"><label>HbA1c (%)</label><input type="number" id="komorbid-hba1c" placeholder="6.5" step="0.1"></div>
+        </div>
+
+        <div class="fg"><label>Catatan</label><input type="text" id="komorbid-catatan" placeholder="Kondisi saat ini..."></div>
+        <button class="btn-primary" onclick="simpanKomorbid()">Simpan Data</button>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title">Tren Tekanan Darah</div>
+          <select id="filter-komorbid" onchange="loadKomorbidChart()" style="font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid #E5E7EB">
+            <option value="30">30 hari</option>
+            <option value="90">3 bulan</option>
+          </select>
+        </div>
+        <div class="chart-wrap"><canvas id="chartTD"></canvas></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title" style="margin-bottom:6px">Tren Gula Darah</div>
+        <div class="chart-wrap"><canvas id="chartGD"></canvas></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title" style="margin-bottom:8px">Riwayat Data</div>
+        <div id="komorbid-history">Memuat...</div>
+      </div>
     </div>
-    <div style="flex:1;background:#fff;border-radius:8px;padding:10px;border:1px solid #E5E7EB;text-align:center">
-      <div id="lp-nilai" style="font-size:20px;font-weight:700">—</div>
-      <div style="font-size:9px;color:#9CA3AF">rasio</div>
-      <div style="font-size:10px;color:#6B7280;margin-top:2px">Pinggang/Panggul</div>
-      <div id="lp-kategori" style="font-size:10px;font-weight:700;margin-top:4px;padding:2px 8px;border-radius:10px;display:inline-block">—</div>
-    </div>
-    <div style="flex:2;background:#fff;border-radius:8px;padding:10px;border:1px solid #E5E7EB">
-      <div id="obesitas-pesan" style="font-size:11px;color:#374151;line-height:1.6"></div>
-      <div style="font-size:9px;color:#9CA3AF;margin-top:6px">Ref: WHO Asia-Pacific 2000; Lancet 2004;363:157-163</div>
-    </div>
-  </div>
-</div>
 
     <!-- Modal Serangan -->
     <div class="modal-overlay" id="modal-serangan" style="display:none">

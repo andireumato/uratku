@@ -215,9 +215,17 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sa
 .pt-name { font-weight: 700; font-size: 12px; }
 .pt-meta { font-size: 10px; color: var(--gray3); }
 
+/* Form row responsive — 1 kolom di HP, 2 kolom di tablet, 4 kolom di desktop */
+@media (min-width: 640px) {
+  .form-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 900px) {
+  .form-row { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
 /* ── RESPONSIVE ── */
-@media (max-width: 768px) {
-  .metrics { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 600px) {
+  .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .grid-2 { grid-template-columns: 1fr; }
   .form-row { grid-template-columns: 1fr; }
   .food-grid { grid-template-columns: 1fr; }
