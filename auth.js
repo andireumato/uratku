@@ -149,6 +149,7 @@ const Auth = {
         <div class="auth-card">
           <div class="logo-big">
             <div class="logo-text"><span class="logo-u">Urat</span><span class="logo-k">Ku</span></div>
+            <div style="font-size:10px;color:#9CA3AF;letter-spacing:0.5px">by dr.andireumato</div>
             <div class="logo-tag">Daftar Akun Baru</div>
           </div>
 
