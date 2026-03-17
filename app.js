@@ -239,7 +239,8 @@ function renderPasien() {
 
         <div style="font-size:11px;font-weight:700;color:#6B7280;margin:10px 0 8px">TEKANAN DARAH</div>
         <div class="form-row">
-          <div class="fg"><label>Sistolik (mmHg)</label><input type="number" id="komorbid-sistol" placeholder=" "></div>
+          <div class="fg"><label>Sistolik (mmHg)</label><input type="number" id="komorbid-sistol" placeholder=" 
+          "></div>
           <div class="fg"><label>Diastolik (mmHg)</label><input type="number" id="komorbid-diastol" placeholder=" "></div>
           <div class="fg"><label>Nadi (x/menit)</label><input type="number" id="komorbid-nadi" placeholder=" "></div>
         </div>
