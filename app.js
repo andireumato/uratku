@@ -106,7 +106,7 @@ function renderPasien() {
         <div id="form-prick">
           <div class="form-row">
             <div class="fg"><label>Tanggal & Waktu</label><input type="datetime-local" id="prick-tgl"></div>
-            <div class="fg"><label>Asam Urat (mg/dL)</label><input type="number" id="prick-au" placeholder="7.2" step="0.1" min="0" max="20"></div>
+            <div class="fg"><label>Asam Urat (mg/dL)</label><input type="number" id="prick-au" placeholder=" " step="0.1" min="0" max="20"></div>
           </div>
           <div class="fg"><label>Catatan</label><textarea id="prick-catatan" rows="2" placeholder="Kondisi saat periksa..."></textarea></div>
           <button class="btn-primary" onclick="simpanLab('prick')">Simpan Pengukuran</button>
@@ -117,11 +117,11 @@ function renderPasien() {
             <div class="fg"><label>Nama Lab / RS</label><input type="text" id="lab-nama" placeholder="mis. RS Adam Malik"></div>
           </div>
           <div class="form-row">
-            <div class="fg"><label>Asam Urat (mg/dL)</label><input type="number" id="lab-au" placeholder="7.2" step="0.1"></div>
-            <div class="fg"><label>Ureum (mg/dL)</label><input type="number" id="lab-ureum" placeholder="28"></div>
+            <div class="fg"><label>Asam Urat (mg/dL)</label><input type="number" id="lab-au" placeholder=" " step="0.1"></div>
+            <div class="fg"><label>Ureum (mg/dL)</label><input type="number" id="lab-ureum" placeholder=" "></div>
           </div>
           <div class="form-row">
-            <div class="fg"><label>Kreatinin (mg/dL)</label><input type="number" id="lab-kreatinin" placeholder="0.9" step="0.01"></div>
+            <div class="fg"><label>Kreatinin (mg/dL)</label><input type="number" id="lab-kreatinin" placeholder=" " step="0.01"></div>
             <div class="fg"><label>eGFR (opsional)</label><input type="number" id="lab-egfr" placeholder="mL/min"></div>
           </div>
           <button class="btn-primary" onclick="simpanLab('lab')">Simpan Hasil Lab</button>
@@ -206,10 +206,10 @@ function renderPasien() {
 
         <div style="font-size:11px;font-weight:700;color:#6B7280;margin:10px 0 8px">ANTROPOMETRI</div>
         <div class="form-row">
-          <div class="fg"><label>Berat Badan (kg)</label><input type="number" id="komorbid-bb" placeholder="65" step="0.1" oninput="hitungIMT()"></div>
-          <div class="fg"><label>Tinggi Badan (cm)</label><input type="number" id="komorbid-tb" placeholder="165" step="0.1" oninput="hitungIMT()"></div>
-          <div class="fg"><label>Lingkar Pinggang (cm)</label><input type="number" id="komorbid-lp" placeholder="80" step="0.1" oninput="hitungLP()"></div>
-          <div class="fg"><label>Lingkar Panggul (cm)</label><input type="number" id="komorbid-lpanggul" placeholder="95" step="0.1" oninput="hitungLP()"></div>
+          <div class="fg"><label>Berat Badan (kg)</label><input type="number" id="komorbid-bb" placeholder=" " step="0.1" oninput="hitungIMT()"></div>
+          <div class="fg"><label>Tinggi Badan (cm)</label><input type="number" id="komorbid-tb" placeholder=" " step="0.1" oninput="hitungIMT()"></div>
+          <div class="fg"><label>Lingkar Pinggang (cm)</label><input type="number" id="komorbid-lp" placeholder=" " step="0.1" oninput="hitungLP()"></div>
+          <div class="fg"><label>Lingkar Panggul (cm)</label><input type="number" id="komorbid-lpanggul" placeholder=" " step="0.1" oninput="hitungLP()"></div>
         </div>
 
         <div id="hasil-imt" style="display:none;background:#F9FAFB;border-radius:10px;padding:12px;margin-bottom:12px;border:1px solid #E5E7EB">
@@ -239,17 +239,17 @@ function renderPasien() {
 
         <div style="font-size:11px;font-weight:700;color:#6B7280;margin:10px 0 8px">TEKANAN DARAH</div>
         <div class="form-row">
-          <div class="fg"><label>Sistolik (mmHg)</label><input type="number" id="komorbid-sistol" placeholder="120"></div>
-          <div class="fg"><label>Diastolik (mmHg)</label><input type="number" id="komorbid-diastol" placeholder="80"></div>
-          <div class="fg"><label>Nadi (x/menit)</label><input type="number" id="komorbid-nadi" placeholder="80"></div>
+          <div class="fg"><label>Sistolik (mmHg)</label><input type="number" id="komorbid-sistol" placeholder=" "></div>
+          <div class="fg"><label>Diastolik (mmHg)</label><input type="number" id="komorbid-diastol" placeholder=" "></div>
+          <div class="fg"><label>Nadi (x/menit)</label><input type="number" id="komorbid-nadi" placeholder=" "></div>
         </div>
 
         <div style="font-size:11px;font-weight:700;color:#6B7280;margin:10px 0 8px">GULA DARAH</div>
         <div class="form-row">
-          <div class="fg"><label>GDS (mg/dL)</label><input type="number" id="komorbid-gds" placeholder="140"></div>
-          <div class="fg"><label>GDP (mg/dL)</label><input type="number" id="komorbid-gdp" placeholder="100"></div>
-          <div class="fg"><label>GD2PP (mg/dL)</label><input type="number" id="komorbid-gd2pp" placeholder="140"></div>
-          <div class="fg"><label>HbA1c (%)</label><input type="number" id="komorbid-hba1c" placeholder="6.5" step="0.1"></div>
+          <div class="fg"><label>Gula Darah Sewaktu (GDS) (mg/dL)</label><input type="number" id="komorbid-gds" placeholder=" "></div>
+          <div class="fg"><label>Gula Darah Puasa (GDP) (mg/dL)</label><input type="number" id="komorbid-gdp" placeholder=" "></div>
+          <div class="fg"><label>Gula Darah 2jam Post Prandial (GD2PP) (mg/dL)</label><input type="number" id="komorbid-gd2pp" placeholder=" "></div>
+          <div class="fg"><label>HbA1c (%)</label><input type="number" id="komorbid-hba1c" placeholder=" " step="0.1"></div>
         </div>
 
         <div class="fg"><label>Catatan</label><input type="text" id="komorbid-catatan" placeholder="Kondisi saat ini..."></div>
