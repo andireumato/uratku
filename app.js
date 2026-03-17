@@ -100,7 +100,7 @@ function renderPasien() {
       </div>
       <div class="card">
         <div style="display:flex;gap:6px;margin-bottom:14px">
-          <button class="tab-btn active" onclick="switchLabTab('prick',this)">Prick Test</button>
+          <button class="tab-btn active" onclick="switchLabTab('prick',this)">Prick Test (Ujung Jari)</button>
           <button class="tab-btn" onclick="switchLabTab('lab',this)">Hasil Lab</button>
         </div>
         <div id="form-prick">
