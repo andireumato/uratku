@@ -204,8 +204,39 @@ function renderPasien() {
         <div class="card-title" style="margin-bottom:10px">Catat Data Hari Ini</div>
         <div class="form-row">
           <div class="fg"><label>Tanggal</label><input type="date" id="komorbid-tgl"></div>
-          <div class="fg"><label>Berat Badan (kg)</label><input type="number" id="komorbid-bb" placeholder=" " step="0.1"></div>
-        </div>
+          <div style="font-size:11px;font-weight:700;color:#6B7280;margin-bottom:8px;margin-top:4px">ANTROPOMETRI</div>
+<div class="form-row">
+  <div class="fg"><label>Berat Badan (kg)</label><input type="number" id="komorbid-bb" placeholder="65" step="0.1" oninput="hitungIMT()"></div>
+  <div class="fg"><label>Tinggi Badan (cm)</label><input type="number" id="komorbid-tb" placeholder="165" step="0.1" oninput="hitungIMT()"></div>
+</div>
+<div class="form-row">
+  <div class="fg"><label>Lingkar Pinggang (cm)</label><input type="number" id="komorbid-lp" placeholder="80" step="0.1" oninput="hitungLP()"></div>
+  <div class="fg"><label>Lingkar Panggul (cm)</label><input type="number" id="komorbid-lpanggul" placeholder="95" step="0.1" oninput="hitungLP()"></div>
+</div>
+
+<!-- Hasil IMT otomatis -->
+<div id="hasil-imt" style="display:none;background:#F9FAFB;border-radius:10px;padding:12px;margin-bottom:12px;border:1px solid #E5E7EB">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+    <div style="font-size:11px;font-weight:700;color:#374151">HASIL KALKULASI OTOMATIS</div>
+    <div style="font-size:9px;color:#9CA3AF">Standar Asia-Pasifik (WHO 2004)</div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+    <div style="background:#fff;border-radius:8px;padding:10px;border:1px solid #E5E7EB;text-align:center">
+      <div id="imt-nilai" style="font-size:20px;font-weight:700">—</div>
+      <div style="font-size:9px;color:#9CA3AF">kg/m²</div>
+      <div style="font-size:10px;color:#6B7280;margin-top:2px">IMT</div>
+      <div id="imt-kategori" style="font-size:10px;font-weight:700;margin-top:4px;padding:2px 8px;border-radius:10px;display:inline-block">—</div>
+    </div>
+    <div style="background:#fff;border-radius:8px;padding:10px;border:1px solid #E5E7EB;text-align:center">
+      <div id="lp-nilai" style="font-size:20px;font-weight:700">—</div>
+      <div style="font-size:9px;color:#9CA3AF">rasio</div>
+      <div style="font-size:10px;color:#6B7280;margin-top:2px">Pinggang/Panggul</div>
+      <div id="lp-kategori" style="font-size:10px;font-weight:700;margin-top:4px;padding:2px 8px;border-radius:10px;display:inline-block">—</div>
+    </div>
+  </div>
+  <div id="obesitas-pesan" style="font-size:11px;color:#374151;margin-top:8px;padding:8px;background:#fff;border-radius:8px;border:1px solid #E5E7EB;line-height:1.5"></div>
+  <div style="font-size:9px;color:#9CA3AF;margin-top:6px">Ref: WHO Asia-Pacific 2000; WHO Expert Consultation, Lancet 2004;363:157-163</div>
+</div>
         <div style="font-size:11px;font-weight:700;color:#6B7280;margin-bottom:8px;margin-top:4px">TEKANAN DARAH</div>
         <div class="form-row">
           <div class="fg"><label>Sistolik (mmHg)</label><input type="number" id="komorbid-sistol" placeholder=" "></div>
@@ -811,6 +842,9 @@ async function simpanKomorbid() {
     gd2pp: parseFloat(document.getElementById('komorbid-gd2pp')?.value)||null,
     hba1c: parseFloat(document.getElementById('komorbid-hba1c')?.value)||null,
     berat_badan: parseFloat(document.getElementById('komorbid-bb')?.value)||null,
+    tinggi_badan: parseFloat(document.getElementById('komorbid-tb')?.value)||null,
+    lingkar_pinggang: parseFloat(document.getElementById('komorbid-lp')?.value)||null,
+    lingkar_panggul: parseFloat(document.getElementById('komorbid-lpanggul')?.value)||null,
     catatan: document.getElementById('komorbid-catatan')?.value||null,
   });
   if (error) { alert('Gagal simpan: ' + error.message); return; }
@@ -887,4 +921,83 @@ async function loadKomorbidHistory() {
       + '<td style="text-align:center">' + (r.berat_badan||'-') + '</td>'
       + '</tr>').join('')
     + '</tbody></table></div>';
+}
+// ── KALKULATOR IMT & LINGKAR PINGGANG ────────────────────────
+function hitungIMT() {
+  const bb = parseFloat(document.getElementById('komorbid-bb')?.value);
+  const tb = parseFloat(document.getElementById('komorbid-tb')?.value);
+  const hasil = document.getElementById('hasil-imt');
+  if (!bb || !tb || tb < 50 || bb < 10) { if (hasil) hasil.style.display = 'none'; return; }
+  if (hasil) hasil.style.display = 'block';
+
+  const tbM = tb / 100;
+  const imt = bb / (tbM * tbM);
+  const imtEl = document.getElementById('imt-nilai');
+  const katEl = document.getElementById('imt-kategori');
+  const pesanEl = document.getElementById('obesitas-pesan');
+  if (imtEl) imtEl.textContent = imt.toFixed(1);
+
+  // Kategori Asia-Pasifik (WHO 2004) — lebih sesuai untuk Indonesia
+  let kat, warna, bg, pesan;
+  if (imt < 18.5) {
+    kat = 'Berat Badan Kurang'; warna = '#1D4ED8'; bg = '#DBEAFE';
+    pesan = 'IMT di bawah normal. Peningkatan berat badan secara bertahap dianjurkan dengan diet bergizi seimbang.';
+  } else if (imt < 23) {
+    kat = 'Normal'; warna = '#15803D'; bg = '#DCFCE7';
+    pesan = 'IMT ideal untuk populasi Asia. Pertahankan berat badan dengan pola makan seimbang dan aktivitas fisik rutin.';
+  } else if (imt < 25) {
+    kat = 'Berisiko (Overweight)'; warna = '#D97706'; bg = '#FEF3C7';
+    pesan = 'IMT memasuki zona risiko untuk populasi Asia. Perhatikan pola makan dan tingkatkan aktivitas fisik. Risiko DM tipe 2 dan hipertensi meningkat.';
+  } else if (imt < 30) {
+    kat = 'Obesitas I'; warna = '#EA580C'; bg = '#FEF2F2';
+    pesan = 'Obesitas derajat I. Penurunan berat badan dianjurkan. Setiap penurunan 5-10% BB dapat menurunkan kadar asam urat secara signifikan.';
+  } else {
+    kat = 'Obesitas II'; warna = '#DC2626'; bg = '#FEF2F2';
+    pesan = 'Obesitas derajat II. Konsultasi intensif dengan dokter diperlukan. Obesitas berkaitan erat dengan hiperurisemia dan peningkatan frekuensi serangan gout.';
+  }
+
+  if (katEl) { katEl.textContent = kat; katEl.style.background = bg; katEl.style.color = warna; }
+  if (pesanEl) pesanEl.textContent = pesan;
+  hitungLP(); // update LP juga
+}
+
+function hitungLP() {
+  const lp = parseFloat(document.getElementById('komorbid-lp')?.value);
+  const lpanggul = parseFloat(document.getElementById('komorbid-lpanggul')?.value);
+  const lpEl = document.getElementById('lp-nilai');
+  const lpKatEl = document.getElementById('lp-kategori');
+
+  // Deteksi jenis kelamin dari profil (default pria jika tidak ada)
+  const jk = currentProfile?.jenis_kelamin || 'Laki-laki';
+  const isPria = jk.toLowerCase().includes('laki');
+
+  if (!lp) {
+    // Kalau hanya ada lingkar pinggang tanpa panggul, tampilkan status obesitas sentral saja
+    if (lpEl) lpEl.textContent = lp ? lp + ' cm' : '—';
+    return;
+  }
+
+  if (lpanggul && lp) {
+    const rasio = lp / lpanggul;
+    if (lpEl) lpEl.textContent = rasio.toFixed(2);
+    // Cutoff: Pria >0.90, Wanita >0.85 = obesitas sentral (WHO)
+    const cutoff = isPria ? 0.90 : 0.85;
+    const isObesSentral = rasio > cutoff;
+    if (lpKatEl) {
+      lpKatEl.textContent = isObesSentral ? 'Obesitas Sentral' : 'Normal';
+      lpKatEl.style.background = isObesSentral ? '#FEE2E2' : '#DCFCE7';
+      lpKatEl.style.color = isObesSentral ? '#DC2626' : '#15803D';
+    }
+  } else if (lp) {
+    // Hanya lingkar pinggang — tampilkan status obesitas sentral berdasarkan WC saja
+    // Cutoff Indonesia: Pria >90cm, Wanita >80cm (IDF/Asia-Pacific)
+    const cutoffWC = isPria ? 90 : 80;
+    const isObesSentral = lp > cutoffWC;
+    if (lpEl) lpEl.textContent = lp + ' cm';
+    if (lpKatEl) {
+      lpKatEl.textContent = isObesSentral ? 'Obesitas Sentral' : 'Normal';
+      lpKatEl.style.background = isObesSentral ? '#FEE2E2' : '#DCFCE7';
+      lpKatEl.style.color = isObesSentral ? '#DC2626' : '#15803D';
+    }
+  }
 }
