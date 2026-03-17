@@ -172,14 +172,6 @@ const Auth = {
                 <div class="role-name">Pasien</div>
                 <div class="role-sub">Saya penderita gout</div>
               </div>
-              <div class="role-card" id="rc-dokter" onclick="selectRole('dokter')">
-                <div class="role-icon">&#x1F468;&#x200D;&#x2695;&#xFE0F;</div>
-                <div class="role-name">Dokter</div>
-                <div class="role-sub">Saya tenaga medis</div>
-              </div>
-            </div>
-            <div id="dokter-notice" class="notice-box" style="display:none">
-              Pendaftaran dokter memerlukan verifikasi nomor STR. Tim UratKu akan menghubungi Anda dalam 1x24 jam.
             </div>
             <button class="btn-main" onclick="goRegStep(2)">Lanjut &rarr;</button>
             <div class="switch-link">Sudah punya akun? <a class="link" onclick="Auth.renderLogin()">Masuk di sini</a></div>
@@ -200,17 +192,6 @@ const Auth = {
                 </div>
                 <div class="fg"><label>No. HP (WhatsApp)</label><input id="p-hp" placeholder="08xxxxxxxxxx" type="tel"></div>
               </div>
-            </div>
-
-            <div id="fields-dokter" style="display:none">
-              <div class="fg"><label>Nama + Gelar</label><input id="d-nama" placeholder="dr. Nama, Sp.PD-KR"></div>
-              <div class="form-row">
-                <div class="fg"><label>Spesialisasi</label>
-                  <select id="d-sp"><option>Sp.PD-KR</option><option>Sp.PD</option><option>Sp.PD-KGH</option><option>Umum</option><option>Lainnya</option></select>
-                </div>
-                <div class="fg"><label>No. STR</label><input id="d-str" placeholder="Nomor STR Anda"></div>
-              </div>
-              <div class="fg"><label>Nama RS / Klinik</label><input id="d-rs" placeholder="RSUP H. Adam Malik Medan"></div>
             </div>
 
             <div class="fg"><label>Email</label><input type="email" id="reg-email" placeholder="email@anda.com">
