@@ -216,8 +216,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sa
 .pt-meta { font-size: 10px; color: var(--gray3); }
 
 /* ── RESPONSIVE ── */
-@media (max-width: 600px) {
-  .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 768px) {
+  .metrics { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .grid-2 { grid-template-columns: 1fr; }
   .form-row { grid-template-columns: 1fr; }
   .food-grid { grid-template-columns: 1fr; }
