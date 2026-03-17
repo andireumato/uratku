@@ -181,7 +181,7 @@ function renderPasien() {
           <div class="fg"><label>Jam Minum</label><input type="time" id="obat-jam" value="08:00"></div>
         </div>
         <div class="form-row">
-          <div class="fg"><label>Dosis</label><input id="obat-dosis" placeholder="1 tablet"></div>
+          <div class="fg"><label>Dosis</label><input id="obat-dosis" placeholder="mis. 1 tablet"></div>
           <div class="fg"><label>Frekuensi</label>
             <select id="obat-frek"><option>Sekali sehari</option><option>Dua kali sehari</option><option>Tiga kali sehari</option></select>
           </div>
