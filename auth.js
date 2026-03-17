@@ -166,8 +166,9 @@ const Auth = {
           <!-- STEP 1: Pilih Peran -->
           <div id="reg-step1">
             <div class="form-title">Anda mendaftar sebagai?</div>
-            <div class="role-grid">
-              <div class="role-card active" id="rc-pasien" onclick="selectRole('pasien')">
+              <div class="role-grid" style="grid-template-columns:1fr;max-width:200px;margin:0 auto">
+                 <div class="role-card active" id="rc-pasien" onclick="selectRole('pasien')">
+
                 <div class="role-icon">&#x1F912;</div>
                 <div class="role-name">Pasien</div>
                 <div class="role-sub">Saya penderita gout</div>
