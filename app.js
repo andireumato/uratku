@@ -209,12 +209,12 @@ function renderPasien() {
         </div>
         <div style="font-size:11px;font-weight:700;color:#6B7280;margin-bottom:8px;margin-top:4px">GULA DARAH</div>
         <div class="form-row">
-          <div class="fg"><label>Gula Darah Sewaktu (GDS) (mg/dL)</label><input type="number" id="komorbid-gds" placeholder="140"></div>
-          <div class="fg"><label>Gula Darah Puasa (GDP) (mg/dL)</label><input type="number" id="komorbid-gdp" placeholder="100"></div>
-          <div class="fg"><label>Gula Darah 2 jam Post Prandial (GD2PP) () (mg/dL)</label><input type="number" id="komorbid-gd2pp" placeholder="140"></div>
+          <div class="fg"><label>GDS (mg/dL)</label><input type="number" id="komorbid-gds" placeholder=" "></div>
+          <div class="fg"><label>GDP (mg/dL)</label><input type="number" id="komorbid-gdp" placeholder=" "></div>
+          <div class="fg"><label>GD2PP (mg/dL)</label><input type="number" id="komorbid-gd2pp" placeholder=" "></div>
         </div>
         <div class="form-row">
-          <div class="fg"><label>HbA1c (%)</label><input type="number" id="komorbid-hba1c" placeholder="6.5" step="0.1"></div>
+          <div class="fg"><label>HbA1c (%)</label><input type="number" id="komorbid-hba1c" placeholder=" " step="0.1"></div>
           <div class="fg"><label>Catatan</label><input type="text" id="komorbid-catatan" placeholder="Kondisi saat ini..."></div>
         </div>
         <button class="btn-primary" onclick="simpanKomorbid()">Simpan Data</button>
