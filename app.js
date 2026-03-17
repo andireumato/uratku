@@ -139,7 +139,12 @@ function renderPasien() {
         <div class="page-sub">Cek kadar purin & kalkulator harian</div>
       </div>
       <div class="card">
-        <div class="card-head"><div class="card-title">Kalkulator Purin Harian</div><span style="font-size:11px;color:#9CA3AF">Target: &lt;400 mg/hari</span></div>
+        <div class="card-head">
+        <div>
+          <div class="card-title">Kalkulator Purin Harian</div>
+          <div style="font-size:10px;color:#9CA3AF;margin-top:2px">*Batas anjuran &lt;400 mg/hari (Japanese Guideline for Gout; Kaneko et al. 2014, 2024). Diet hanya berkontribusi ~30% terhadap kadar asam urat. Bukan pengganti saran dokter.</div>
+        </div>
+      </div>
         <div style="display:flex;justify-content:space-between;font-size:11px;color:#9CA3AF;margin-bottom:3px">
           <span>Total purin hari ini</span><span id="purin-pct">0%</span>
         </div>
