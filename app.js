@@ -177,7 +177,7 @@ function renderPasien() {
       <div class="card">
         <div class="card-title" style="margin-bottom:10px">Tambah Obat Baru</div>
         <div class="form-row">
-          <div class="fg"><label>Nama Obat</label><input id="obat-nama" placeholder="Allopurinol 300mg"></div>
+          <div class="fg"><label>Nama Obat</label><input id="obat-nama" placeholder="mis. Allopurinol 300mg"></div>
           <div class="fg"><label>Jam Minum</label><input type="time" id="obat-jam" value="08:00"></div>
         </div>
         <div class="form-row">
@@ -199,7 +199,7 @@ function renderPasien() {
         <div class="card-title" style="margin-bottom:10px">Catat Data Hari Ini</div>
         <div class="form-row">
           <div class="fg"><label>Tanggal</label><input type="date" id="komorbid-tgl"></div>
-          <div class="fg"><label>Berat Badan (kg)</label><input type="number" id="komorbid-bb" placeholder="65" step="0.1"></div>
+          <div class="fg"><label>Berat Badan (kg)</label><input type="number" id="komorbid-bb" placeholder=" " step="0.1"></div>
         </div>
         <div style="font-size:11px;font-weight:700;color:#6B7280;margin-bottom:8px;margin-top:4px">TEKANAN DARAH</div>
         <div class="form-row">
