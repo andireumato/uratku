@@ -212,7 +212,6 @@ function renderPasien() {
           <div class="fg"><label>Berat Badan (kg)</label><input type="number" id="komorbid-bb" placeholder=" " step="0.1" oninput="hitungIMT()"></div>
           <div class="fg"><label>Tinggi Badan (cm)</label><input type="number" id="komorbid-tb" placeholder=" " step="0.1" oninput="hitungIMT()"></div>
           <div class="fg"><label>Lingkar Pinggang (cm)</label><input type="number" id="komorbid-lp" placeholder=" " step="0.1" oninput="hitungLP()"></div>
-          <div class="fg"><label>Lingkar Panggul (cm)</label><input type="number" id="komorbid-lpanggul" placeholder=" " step="0.1" oninput="hitungLP()"></div>
         </div>
 
         <div id="hasil-imt" style="display:none;background:#F9FAFB;border-radius:10px;padding:12px;margin-bottom:12px;border:1px solid #E5E7EB">
@@ -230,7 +229,8 @@ function renderPasien() {
             <div style="min-width:100px;flex:1;background:#fff;border-radius:8px;padding:10px;border:1px solid #E5E7EB;text-align:center">
               <div id="lp-nilai" style="font-size:20px;font-weight:700">—</div>
               <div style="font-size:9px;color:#9CA3AF">rasio</div>
-              <div style="font-size:10px;color:#6B7280;margin-top:2px">Pinggang/Panggul</div>
+              <div style="font-size:10px;color:#6B7280;margin-top:2px">WHtR</div>
+              <div style="font-size:9px;color:#9CA3AF;margin-top:6px">Ref: Browning et al. Nutr Res Rev 2010; Ashwell et al. Obes Rev 2012</div>
               <div id="lp-kategori" style="font-size:10px;font-weight:700;margin-top:4px;padding:2px 8px;border-radius:10px;display:inline-block">—</div>
             </div>
             <div style="min-width:200px;flex:2;background:#fff;border-radius:8px;padding:10px;border:1px solid #E5E7EB">
@@ -970,41 +970,41 @@ function hitungIMT() {
 
 function hitungLP() {
   const lp = parseFloat(document.getElementById('komorbid-lp')?.value);
-  const lpanggul = parseFloat(document.getElementById('komorbid-lpanggul')?.value);
+  const tb = parseFloat(document.getElementById('komorbid-tb')?.value);
   const lpEl = document.getElementById('lp-nilai');
   const lpKatEl = document.getElementById('lp-kategori');
+  const hasil = document.getElementById('hasil-imt');
 
-  // Deteksi jenis kelamin dari profil (default pria jika tidak ada)
-  const jk = currentProfile?.jenis_kelamin || 'Laki-laki';
-  const isPria = jk.toLowerCase().includes('laki');
+  if (!lp) { if (lpEl) lpEl.textContent = '—'; return; }
+  if (hasil) hasil.style.display = 'block';
 
-  if (!lp) {
-    // Kalau hanya ada lingkar pinggang tanpa panggul, tampilkan status obesitas sentral saja
-    if (lpEl) lpEl.textContent = lp ? lp + ' cm' : '—';
-    return;
-  }
+  if (lp && tb) {
+    // WHtR = Lingkar Pinggang / Tinggi Badan
+    const whtr = lp / tb;
+    if (lpEl) lpEl.textContent = whtr.toFixed(2);
 
-  if (lpanggul && lp) {
-    const rasio = lp / lpanggul;
-    if (lpEl) lpEl.textContent = rasio.toFixed(2);
-    // Cutoff: Pria >0.90, Wanita >0.85 = obesitas sentral (WHO)
-    const cutoff = isPria ? 0.90 : 0.85;
-    const isObesSentral = rasio > cutoff;
-    if (lpKatEl) {
-      lpKatEl.textContent = isObesSentral ? 'Obesitas Sentral' : 'Normal';
-      lpKatEl.style.background = isObesSentral ? '#FEE2E2' : '#DCFCE7';
-      lpKatEl.style.color = isObesSentral ? '#DC2626' : '#15803D';
+    // Kategori — cutoff universal 0.5 (Browning et al. 2010; Ashwell et al. 2012)
+    let kat, warna, bg;
+    if (whtr < 0.40) {
+      kat = 'Underweight'; warna = '#1D4ED8'; bg = '#DBEAFE';
+    } else if (whtr < 0.50) {
+      kat = 'Normal'; warna = '#15803D'; bg = '#DCFCE7';
+    } else if (whtr < 0.55) {
+      kat = 'Risiko Meningkat'; warna = '#D97706'; bg = '#FEF3C7';
+    } else if (whtr < 0.60) {
+      kat = 'Obesitas Sentral'; warna = '#EA580C'; bg = '#FEF2F2';
+    } else {
+      kat = 'Obesitas Sentral Berat'; warna = '#DC2626'; bg = '#FEF2F2';
     }
-  } else if (lp) {
-    // Hanya lingkar pinggang — tampilkan status obesitas sentral berdasarkan WC saja
-    // Cutoff Indonesia: Pria >90cm, Wanita >80cm (IDF/Asia-Pacific)
-    const cutoffWC = isPria ? 90 : 80;
-    const isObesSentral = lp > cutoffWC;
+
+    if (lpKatEl) {
+      lpKatEl.textContent = kat;
+      lpKatEl.style.background = bg;
+      lpKatEl.style.color = warna;
+    }
+  } else {
+    // Hanya lingkar pinggang tanpa tinggi badan
     if (lpEl) lpEl.textContent = lp + ' cm';
-    if (lpKatEl) {
-      lpKatEl.textContent = isObesSentral ? 'Obesitas Sentral' : 'Normal';
-      lpKatEl.style.background = isObesSentral ? '#FEE2E2' : '#DCFCE7';
-      lpKatEl.style.color = isObesSentral ? '#DC2626' : '#15803D';
-    }
+    if (lpKatEl) { lpKatEl.textContent = 'Isi tinggi badan'; lpKatEl.style.background = '#F3F4F6'; lpKatEl.style.color = '#6B7280'; }
   }
 }
