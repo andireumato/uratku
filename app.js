@@ -106,7 +106,7 @@ function renderPasien() {
         <div id="form-prick">
           <div class="form-row">
             <div class="fg"><label>Tanggal & Waktu</label><input type="datetime-local" id="prick-tgl"></div>
-            <div class="fg"><label>Asam Urat (mg/dL)</label><input type="number" id="prick-au" placeholder=" " step="0.1" min="0" max="20"></div>
+            <div class="fg"><label>Asam Urat (mg/dL)</label><input type="number" id="prick-au" placeholder="cth. 7.2" step="0.1" min="0" max="20"></div>
           </div>
           <div class="fg"><label>Catatan</label><textarea id="prick-catatan" rows="2" placeholder="Kondisi saat periksa..."></textarea></div>
           <button class="btn-primary" onclick="simpanLab('prick')">Simpan Pengukuran</button>
@@ -114,14 +114,14 @@ function renderPasien() {
         <div id="form-lab" style="display:none">
           <div class="form-row">
             <div class="fg"><label>Tanggal</label><input type="date" id="lab-tgl"></div>
-            <div class="fg"><label>Nama Lab / RS</label><input type="text" id="lab-nama" placeholder="mis. RS Adam Malik"></div>
+            <div class="fg"><label>Nama Lab / RS</label><input type="text" id="lab-nama" placeholder="cth. RS Adam Malik atau Laboratorium swasta"></div>
           </div>
           <div class="form-row">
-            <div class="fg"><label>Asam Urat (mg/dL)</label><input type="number" id="lab-au" placeholder=" " step="0.1"></div>
-            <div class="fg"><label>Ureum (mg/dL)</label><input type="number" id="lab-ureum" placeholder=" "></div>
+            <div class="fg"><label>Asam Urat (mg/dL)</label><input type="number" id="lab-au" placeholder="cth. 7.2 " step="0.1"></div>
+            <div class="fg"><label>Ureum (mg/dL)</label><input type="number" id="lab-ureum" placeholder="cth. 32 "></div>
           </div>
           <div class="form-row">
-            <div class="fg"><label>Kreatinin (mg/dL)</label><input type="number" id="lab-kreatinin" placeholder=" " step="0.01"></div>
+            <div class="fg"><label>Kreatinin (mg/dL)</label><input type="number" id="lab-kreatinin" placeholder="cth. 0.9" step="0.01"></div>
             <div class="fg"><label>eGFR (opsional)</label><input type="number" id="lab-egfr" placeholder="mL/min"></div>
           </div>
           <button class="btn-primary" onclick="simpanLab('lab')">Simpan Hasil Lab</button>
