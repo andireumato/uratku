@@ -767,7 +767,7 @@ function switchLabTab(t, btn) {
 }
 
 // Glasses
-window._glasses = 7;
+window._glasses = 0;
 function buildGlasses() {
   const el = document.getElementById('glasses-wrap');
   if (!el) return;
