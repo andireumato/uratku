@@ -137,6 +137,9 @@ function renderPasien() {
       <div class="page-header">
         <div class="page-title">Database Makanan</div>
         <div class="page-sub">Cek kadar purin & kalkulator harian</div>
+<div style="font-size:10px;color:#9CA3AF;margin-top:4px;line-height:1.5;background:#F9FAFB;border-radius:8px;padding:8px 10px;border-left:3px solid #2563EB">
+  Kadar purin berdasarkan Kaneko et al. (Biol Pharm Bull 2014), USDA-NIH Purine Database 2025, dan Grahame et al. Sayuran tropis Indonesia menggunakan estimasi botanikal. Bukan pengganti konsultasi gizi klinis.
+</div>
       </div>
       <div class="card">
         <div class="card-head">
