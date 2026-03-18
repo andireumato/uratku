@@ -382,7 +382,7 @@ async function loadMetrics() {
         <div class="metric-unit">mg/dL</div><div class="metric-label">Ureum</div></div>
       <div class="metric"><div class="metric-val" style="color:${kr>1.2?'#DC2626':'#16A34A'}">${kr ? kr.toFixed(2) : '—'}</div>
         <div class="metric-unit">mg/dL</div><div class="metric-label">Kreatinin</div></div>
-      <div class="metric"><div class="metric-val">${(window._glasses||7)*250}</div>
+      <div class="metric-val" data-hidrasi>${(window._glasses||0)*250}</div>
         <div class="metric-unit">mL</div><div class="metric-label">Hidrasi</div>
         <span class="badge bw">Hari ini</span></div>
     </div>`;
@@ -777,7 +777,13 @@ function buildGlasses() {
   const info = document.getElementById('hydration-info');
   if (info) info.textContent = (window._glasses * 250).toLocaleString() + ' mL / 2.500 mL';
 }
-function toggleGlass(i) { window._glasses = window._glasses === i + 1 ? i : i + 1; buildGlasses(); }
+function toggleGlass(i) {
+  window._glasses = window._glasses === i + 1 ? i : i + 1;
+  buildGlasses();
+  // Update angka di metrik atas
+  const metrikHidrasi = document.querySelector('.metric-val[data-hidrasi]');
+  if (metrikHidrasi) metrikHidrasi.textContent = window._glasses * 250;
+}
 
 // Food
 let selMakanan = {};
