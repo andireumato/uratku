@@ -229,7 +229,7 @@ function renderPasien() {
             <div style="min-width:100px;flex:1;background:#fff;border-radius:8px;padding:10px;border:1px solid #E5E7EB;text-align:center">
               <div id="lp-nilai" style="font-size:20px;font-weight:700">—</div>
               <div style="font-size:9px;color:#9CA3AF">rasio</div>
-              <div style="font-size:10px;color:#6B7280;margin-top:2px">WHtR</div>
+              <div style="font-size:10px;color:#6B7280;margin-top:2px">Rasio Lingkar Pinggang-Tinggi Badan / WHtR</div>
               <div style="font-size:9px;color:#9CA3AF;margin-top:6px">Ref: Browning et al. Nutr Res Rev 2010; Ashwell et al. Obes Rev 2012</div>
               <div id="lp-kategori" style="font-size:10px;font-weight:700;margin-top:4px;padding:2px 8px;border-radius:10px;display:inline-block">—</div>
             </div>
