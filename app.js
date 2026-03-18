@@ -816,7 +816,7 @@ function updatePurin() {
 function openSeranganModal() { document.getElementById('modal-serangan').style.display = 'flex'; }
 function closeSeranganModal() { document.getElementById('modal-serangan').style.display = 'none'; }
 function buildJointGrid() {
-  const joints = ['Ibu jari kaki kanan', 'Ibu jari kaki kiri', 'Pergelangan kaki kanan', 'Pergelangan kaki kiri', 'Lutut kanan', 'Lutut kiri', 'Siku', 'Pergelangan tangan kanan', 'Pergelangan tangan kiri', 'Lainnya'];
+  const joints = ['Ibu jari kaki kanan', 'Ibu jari kaki kiri', 'Pergelangan kaki kanan', 'Pergelangan kaki kiri', 'Lutut kanan', 'Lutut kiri', 'Siku kanan', 'Siku kiri', 'Pergelangan tangan kanan', 'Pergelangan tangan kiri', 'Lainnya'];
   const el = document.getElementById('joint-grid');
   if (!el) return;
   el.innerHTML = joints.map(j => `<button class="jbtn" onclick="this.classList.toggle('on')">${j}</button>`).join('');
