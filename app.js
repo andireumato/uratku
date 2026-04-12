@@ -1759,9 +1759,14 @@ function pilihObat(btn, idx) {
 // ── 13. MINI GAME OPEN/CLOSE ─────────────────────────────────
 function openMiniGame() {
   document.querySelectorAll('.cq-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('mg-wrap').classList.add('open');
-  document.getElementById('mg-start').style.display = 'flex';
-  document.getElementById('mg-result').style.display = 'none';
+  const mgWrap = document.getElementById('mg-wrap');
+  if (!mgWrap) return;
+  mgWrap.style.opacity = '1';
+  mgWrap.style.pointerEvents = 'all';
+  const mgStart = document.getElementById('mg-start');
+  const mgResult = document.getElementById('mg-result');
+  if (mgStart) mgStart.style.display = 'flex';
+  if (mgResult) mgResult.style.display = 'none';
 }
 
 function closeMiniGame() {
