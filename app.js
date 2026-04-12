@@ -2333,3 +2333,29 @@ function showGToast(msg, type = '') {
   clearTimeout(t._timer);
   t._timer = setTimeout(() => t.classList.remove('show'), 3000);
 }
+function cqComplete(card, exp) {
+  if (!card || card.classList.contains('done')) return;
+  card.classList.add('done');
+  card.style.opacity = '0.7';
+  // Centang
+  const checkId = card.id === 'quest-obat' ? 'check-obat' :
+                  card.id === 'quest-hidrasi' ? 'check-hidrasi' :
+                  card.id === 'quest-lab' ? 'check-lab' :
+                  card.id === 'quest-au-baik' ? 'check-au' : null;
+  if (checkId) {
+    const c = document.getElementById(checkId);
+    if (c) { c.textContent = '✓'; c.style.background = '#10B981'; c.style.borderColor = '#10B981'; }
+  }
+  // Progress bar penuh
+  const barId = card.id === 'quest-obat' ? 'qbar-obat' :
+                card.id === 'quest-hidrasi' ? 'qbar-hidrasi' :
+                card.id === 'quest-lab' ? 'qbar-lab' :
+                card.id === 'quest-au-baik' ? 'qbar-au' : null;
+  if (barId) {
+    const b = document.getElementById(barId);
+    if (b) { b.style.width = '100%'; b.style.background = '#10B981'; }
+  }
+  // Tambah EXP
+  cqAddExp(exp);
+  showGToast('✅ Quest selesai! +' + exp + ' EXP');
+}
