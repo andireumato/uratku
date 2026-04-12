@@ -2088,52 +2088,30 @@ function mgOnTimeout() {
 // ANSWER
 // ══════════════════════════
 function mgAnswer(zone) {
-  if (!gameActive || !currentFood) return;
-  clearInterval(timerInterval);
-
-  const isCorrect = zone === currentFood.cat;
-  const elapsed = Date.now() - timerStart;
-  const speedBonus = Math.max(0, Math.floor((1 - elapsed / timerDuration) * 50));
-
-  if (isCorrect) {
-    correct++;
-    combo++;
-    if (combo > maxCombo) maxCombo = combo;
-    const comboMult = Math.min(combo, 8);
-    const pts = (10 + speedBonus) * comboMult;
-    score += pts;
-    counts[zone]++;
-
-    mgUpdateCombo();
-    mgShowFeedback(combo >= 3 ? '🔥 +' + pts : '✅ +' + pts, combo >= 3 ? '#F59E0B' : '#10B981');
-    mgSpawnParticles(zone);
-
-    // Flash zone
-    const zoneEl = document.getElementById('zone-' + zone);
-    if(zoneEl){zoneEl.style.transform='scale(1.08)';setTimeout(()=>{if(zoneEl)zoneEl.style.transform='';},300);}
-    
-
-    document.getElementById('count-' + zone).textContent = counts[zone];
-    foodsInLevel++;
-
-    if (foodsInLevel >= foodsPerLevel) mgLevelUp();
-    else setTimeout(() => { if (gameActive) mgNextFood(); }, 400);
+  if (!mgActive || !mgCurrentFood) return;
+  clearInterval(mgTimerInterval);
+  const ok = zone === mgCurrentFood.cat;
+  const elapsed = Date.now() - mgTimerStart;
+  const spd = Math.max(0, Math.floor((1 - elapsed / mgTimerDuration) * 50));
+  if (ok) {
+    mgCorrect++; mgCombo++; if (mgCombo > mgMaxCombo) mgMaxCombo = mgCombo;
+    const mult = Math.min(mgCombo, 8);
+    const pts = (10 + spd) * mult;
+    mgScore += pts; mgCounts[zone]++;
+    const scoreEl = document.getElementById('mg-score');
+    if (scoreEl) scoreEl.textContent = mgScore.toLocaleString();
+    const cntEl = document.getElementById('mgc-' + zone);
+    if (cntEl) cntEl.textContent = mgCounts[zone];
+    showGToast(mgCombo >= 3 ? '🔥 COMBO x' + mgCombo + '! +' + pts + ' poin!' : '✅ Benar! +' + pts + ' poin!');
+    mgFoodsInLevel++;
+    if (mgFoodsInLevel >= mgFoodsPerLevel) mgLevelUp();
+    else setTimeout(() => { if (mgActive) mgNextFood(); }, 400);
   } else {
-    wrong++;
-    combo = 0;
-    mgUpdateCombo();
+    mgWrong++; mgCombo = 0;
+    showGToast('❌ Salah! ' + mgCurrentFood.n + ' → ' + mgCurrentFood.cat.toUpperCase() + ' (' + mgCurrentFood.hint + ')', 'err');
     mgLoseLife();
-
-    const zoneEl = document.getElementById('zone-' + zone);
-    if(zoneEl){zoneEl.style.transform='translateX(-6px)';setTimeout(()=>{if(zoneEl)zoneEl.style.transform='translateX(6px)';},100);setTimeout(()=>{if(zoneEl)zoneEl.style.transform='';},200);}
-    
-
-    mgShowFeedback('❌', '#EF4444');
-    showToast('❌ Salah! ' + currentFood.n + ' termasuk purin ' + currentFood.cat.toUpperCase() + ' (' + currentFood.hint + ')', 'err');
-
-    setTimeout(() => { if (gameActive) mgNextFood(); }, 800);
+    setTimeout(() => { if (mgActive) mgNextFood(); }, 800);
   }
-
   mgUpdateUI();
 }
 
