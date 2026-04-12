@@ -63,6 +63,16 @@ function renderPasien() {
       </div>
       <div id="metrics-area"></div>
       <div id="alert-area"></div>
+       <!-- BANNER CRYSTAL QUEST -->
+      <div class="game-banner" onclick="openGame()">
+        <div class="game-crystal">💎</div>
+        <div style="flex:1;">
+          <div class="game-banner-tag">🏆 CRYSTAL QUEST</div>
+          <div id="banner-title" class="game-banner-title">Tap untuk lihat kristal asam uratmu</div>
+          <div id="banner-sub" class="game-banner-sub">Pantau AU, selesaikan quest, kalahkan Boss!</div>
+        </div>
+        <div id="banner-exp" style="position:absolute;top:12px;right:12px;background:rgba(252,211,77,.15);color:#FCD34D;font-size:11px;font-weight:800;padding:3px 10px;border-radius:100px;border:1px solid rgba(252,211,77,.2);">⚡ 0 EXP</div>
+      </div>
       <div class="card">
         <div class="card-head"><div class="card-title">Tren Asam Urat</div>
           <select id="filter-chart" onchange="loadChartData()" style="font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid #E5E7EB">
@@ -90,16 +100,6 @@ function renderPasien() {
         </div>
         <div class="glasses-wrap" id="glasses-wrap"></div>
         <div style="font-size:10px;color:#9CA3AF;margin-top:6px">Klik gelas untuk catat minum (1 gelas = 250 mL)</div>
-      </div>
-      <!-- BANNER CRYSTAL QUEST -->
-      <div class="game-banner" onclick="openGame()">
-        <div class="game-crystal">💎</div>
-        <div style="flex:1;">
-          <div class="game-banner-tag">🏆 CRYSTAL QUEST</div>
-          <div id="banner-title" class="game-banner-title">Tap untuk lihat kristal asam uratmu</div>
-          <div id="banner-sub" class="game-banner-sub">Pantau AU, selesaikan quest, kalahkan Boss!</div>
-        </div>
-        <div id="banner-exp" style="position:absolute;top:12px;right:12px;background:rgba(252,211,77,.15);color:#FCD34D;font-size:11px;font-weight:800;padding:3px 10px;border-radius:100px;border:1px solid rgba(252,211,77,.2);">⚡ 0 EXP</div>
       </div>
       <button class="btn-serangan" onclick="openSeranganModal()">SAYA SEDANG SERANGAN GOUT SEKARANG</button>
     </div>
