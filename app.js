@@ -1378,7 +1378,12 @@ function openGame() {
   overlay.style.pointerEvents = 'all';
   document.body.style.overflow = 'hidden';
   loadCrystalQuest();
+  // Tampilkan quest section secara default
+  document.querySelectorAll('.cq-section').forEach(s => s.style.display = 'none');
+  const questSec = document.getElementById('cqs-quest');
+  if (questSec) questSec.style.display = 'block';
 }
+
 
 function closeGame() {
   const overlay = document.getElementById('cq-overlay');
@@ -1669,9 +1674,12 @@ function showBossKalah() {
 // ── 9. TAB SWITCHING ─────────────────────────────────────────
 function cqTab(id, btn) {
   document.querySelectorAll('.cq-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.cq-section').forEach(s => s.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('cqs-' + id).classList.add('active');
+  document.querySelectorAll('.cq-section').forEach(s => {
+    s.style.display = 'none';
+  });
+  if (btn) btn.classList.add('active');
+  const sec = document.getElementById('cqs-' + id);
+  if (sec) sec.style.display = 'block';
 }
 
 // ── 10. CRYSTAL TAP ──────────────────────────────────────────
