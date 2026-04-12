@@ -1372,13 +1372,19 @@ function hitungLP() {
 
 // ── 1. BUKA / TUTUP GAME ────────────────────────────────────
 function openGame() {
-  document.getElementById('cq-overlay').classList.add('open');
+  const overlay = document.getElementById('cq-overlay');
+  if (!overlay) return;
+  overlay.style.opacity = '1';
+  overlay.style.pointerEvents = 'all';
   document.body.style.overflow = 'hidden';
-  loadCrystalQuest(); // load data real dari Supabase
+  loadCrystalQuest();
 }
 
 function closeGame() {
-  document.getElementById('cq-overlay').classList.remove('open');
+  const overlay = document.getElementById('cq-overlay');
+  if (!overlay) return;
+  overlay.style.opacity = '0';
+  overlay.style.pointerEvents = 'none';
   document.body.style.overflow = '';
 }
 
