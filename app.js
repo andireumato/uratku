@@ -1989,6 +1989,15 @@ function mgStart() {
   document.getElementById('mg-start').style.display = 'none';
   document.getElementById('mg-result').style.display = 'none';
   mgSetupTouchEvents();
+  ['rendah','sedang','tinggi'].forEach(z => {
+    const el = document.getElementById('mgz-' + z);
+    if (el) el.onclick = () => mgTap(z);
+  });
+  // Klik kartu juga bisa drag manual
+  const card = document.getElementById('mg-card');
+  if (card) {
+    card.onclick = null; // reset
+  }
 
   mgUpdateUI();
   mgShuffleQueue();
@@ -2188,30 +2197,36 @@ function mgEndGame() {
 let mgDragCard = null;
 
 function mgDragStart(e) {
-  isDragging = true;
-  dragCard = e.target;
+  mgDragCard = e.target;
   e.dataTransfer.effectAllowed = 'move';
-  setTimeout(() => { if (dragCard) dragCard.style.opacity = '.5'; }, 0);
+  setTimeout(() => { if (mgDragCard) mgDragCard.style.opacity = '.5'; }, 0);
 }
 
 function mgDragEnd(e) {
-  isDragging = false;
-  if (dragCard) { dragCard.style.opacity = ''; dragCard = null; }
-  ['rendah','sedang','tinggi'].forEach(z => document.getElementById('zone-'+z).classList.remove('drag-over'));
+  if (mgDragCard) { mgDragCard.style.opacity = ''; mgDragCard = null; }
+  ['rendah','sedang','tinggi'].forEach(z => {
+    const el = document.getElementById('mgz-' + z);
+    if (el) el.classList.remove('drag-over');
+  });
 }
 
 function mgDragOver(e, zone) {
   e.preventDefault();
-  document.getElementById('zone-'+zone).classList.add('drag-over');
+  const el = document.getElementById('mgz-' + zone);
+  if (el) el.classList.add('drag-over');
 }
 
 function mgDragLeave(e, zone) {
-  document.getElementById('zone-'+zone).classList.remove('drag-over');
+  const el = document.getElementById('mgz-' + zone);
+  if (el) el.classList.remove('drag-over');
 }
 
 function mgDrop(e, zone) {
   e.preventDefault();
-  ['rendah','sedang','tinggi'].forEach(z => document.getElementById('zone-'+z).classList.remove('drag-over'));
+  ['rendah','sedang','tinggi'].forEach(z => {
+    const el = document.getElementById('mgz-' + z);
+    if (el) el.classList.remove('drag-over');
+  });
   mgAnswer(zone);
 }
 
@@ -2272,7 +2287,7 @@ foodCard.addEventListener('touchend', e => {
 
 // TAP ZONE (alternative on mobile)
 function mgTap(zone) {
-  if (!gameActive || cloneEl) return;
+  if (!mgActive || mgCloneEl) return;
   mgAnswer(zone);
 }
 
