@@ -339,6 +339,8 @@ async function loadCrystalQuest() {
     const hariAuBaik = cqHitungHariAuBaik(labData || []);
     const totalExp = (labData?.length || 0) * 80 + streakObat * 50 + hariAuBaik * 100;
 
+    _cqExpTotal = totalExp;
+    _cqDataLoaded = true;
     cqUpdateUI({ auTerakhir, streakObat, hariAuBaik, totalExp });
     cqUpdateQuest();
     cqUpdateBanner({ auTerakhir, streakObat, totalExp });
@@ -446,6 +448,7 @@ function cqUpdateUI({ auTerakhir, streakObat, hariAuBaik, totalExp }) {
 
 // ── ADD EXP ───────────────────────────────────────────────────
 let _cqExpTotal = 0;
+let _cqDataLoaded = false;
 function cqAddExp(amt) {
   _cqExpTotal += amt;
   const expPerLevel = 2000;
