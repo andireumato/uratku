@@ -1993,11 +1993,14 @@ function mgStart() {
     const el = document.getElementById('mgz-' + z);
     if (el) el.onclick = () => mgTap(z);
   });
-  // Klik kartu juga bisa drag manual
-  const card = document.getElementById('mg-card');
-  if (card) {
-    card.onclick = null; // reset
+  ['rendah','sedang','tinggi'].forEach(z => {
+    const el = document.getElementById('mgz-' + z);
+    if (el) {
+      el.ondragover = (e) => { e.preventDefault(); el.style.transform = 'scale(1.05)'; };
+      el.ondragleave = () => { el.style.transform = ''; };
+      el.ondrop = (e) => { e.preventDefault(); el.style.transform = ''; if (mgActive) mgAnswer(z); };
   }
+});
 
   mgUpdateUI();
   mgShuffleQueue();
