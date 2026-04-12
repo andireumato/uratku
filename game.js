@@ -339,7 +339,8 @@ async function loadCrystalQuest() {
     const hariAuBaik = cqHitungHariAuBaik(labData || []);
     const totalExp = (labData?.length || 0) * 80 + streakObat * 50 + hariAuBaik * 100;
 
-    _cqExpTotal = totalExp;
+   const savedExp = parseInt(localStorage.getItem('cq_exp_' + currentUser.id) || '0');
+    _cqExpTotal = Math.max(totalExp, savedExp);
     _cqDataLoaded = true;
     cqUpdateUI({ auTerakhir, streakObat, hariAuBaik, totalExp });
     cqUpdateQuest();
@@ -450,24 +451,37 @@ function cqUpdateUI({ auTerakhir, streakObat, hariAuBaik, totalExp }) {
 let _cqExpTotal = 0;
 let _cqDataLoaded = false;
 function cqAddExp(amt) {
-  _cqExpTotal += amt;
+  if (amt > 0) {
+    _cqExpTotal += amt;
+    try { localStorage.setItem('cq_exp_' + (currentUser?.id||''), _cqExpTotal); } catch(e){}
+  }
   const expPerLevel = 2000;
   const expDiLevel = _cqExpTotal % expPerLevel;
+  const level = Math.floor(_cqExpTotal / expPerLevel) + 1;
   const pct = Math.min((expDiLevel / expPerLevel) * 100, 100);
+  const levelNames = ['Pemula','Belajar','Berkembang','Mahir','Ahli','Master','Legenda','UratKu Pro'];
   const bar = document.getElementById('cq-bar');
   if (bar) bar.style.width = pct + '%';
   const expLabel = document.getElementById('cq-exp-label');
   if (expLabel) expLabel.textContent = expDiLevel.toLocaleString() + ' / 2.000 EXP';
   const expTop = document.getElementById('cq-exp-top');
   if (expTop) expTop.textContent = _cqExpTotal.toLocaleString();
-  // Popup
-  const p = document.getElementById('g-exp-popup');
-  if (p) {
-    p.textContent = '+' + amt + ' EXP';
-    p.style.opacity = '1'; p.style.transform = 'translate(-50%,-50%) scale(1)';
-    setTimeout(() => { p.style.opacity = '0'; p.style.transform = 'translate(-50%,-80%) scale(.8)'; }, 1200);
+  const lvlLabel = document.getElementById('cq-level-label');
+  if (lvlLabel) lvlLabel.textContent = 'Level ' + level + ' — ' + levelNames[Math.min(level-1, levelNames.length-1)];
+  const lvlNum = document.getElementById('cq-level-num');
+  if (lvlNum) lvlNum.textContent = level;
+  const bannerExp = document.getElementById('banner-exp');
+  if (bannerExp) bannerExp.textContent = '⚡ ' + _cqExpTotal.toLocaleString() + ' EXP';
+  if (amt > 0) {
+    const p = document.getElementById('g-exp-popup');
+    if (p) {
+      p.textContent = '+' + amt + ' EXP';
+      p.style.opacity = '1'; p.style.transform = 'translate(-50%,-50%) scale(1)';
+      setTimeout(() => { p.style.opacity = '0'; p.style.transform = 'translate(-50%,-80%) scale(.8)'; }, 1200);
+    }
   }
 }
+
 
 // ── QUEST COMPLETE ────────────────────────────────────────────
 function cqComplete(card, exp) {
